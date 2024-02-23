@@ -35,8 +35,7 @@ import com.buidel.type.fast.the.eleventhxmlwallpaper.utils.WallPaperUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.UUID
-
+import io.reactivex.rxjava3.core.Observable
 class EndActivity : AppCompatActivity() {
     private lateinit var imgEnd: ImageView
     private lateinit var imgEndDetail: ImageView
@@ -95,9 +94,9 @@ class EndActivity : AppCompatActivity() {
             if (WallPaperUtils.getComplex1(
                     "asd",
                     222
-                ) && hasWritePermission() || Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                ) && (hasWritePermission() || Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             ) {
-                downloadAndSaveImage()
+                downloadAndSaveImageRx()
             } else {
                 requestWritePermission()
             }
@@ -208,7 +207,7 @@ class EndActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (WallPaperUtils.getComplex1("zccs", 12) && requestCode == 55114) {
             if (WallPaperUtils.getComplex1("zccs", 12) && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadAndSaveImage()
+                downloadAndSaveImageRx()
             } else {
                 showPermissionDeniedDialog()
             }
@@ -274,6 +273,38 @@ class EndActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    private fun downloadAndSaveImageRx() {
+        val observable = Observable.fromCallable {
+            val drawableInt = if (DataWallPaper.imgType) {
+                DataWallPaper.localImageData[DataWallPaper.posInt]
+            } else {
+                DataWallPaper.localBannerImageData[DataWallPaper.posInt]
+            }
+            val imageDrawable = ContextCompat.getDrawable(this@EndActivity, drawableInt) ?: throw RuntimeException("Drawable not found")
+            if (imageDrawable is BitmapDrawable) {
+                val bitmap = imageDrawable.bitmap
+                saveImageToGallery(
+                    bitmap,
+                    "wallpaper_${System.currentTimeMillis()}",
+                    "My Image Description"
+                ) ?: throw RuntimeException("Failed to save image")
+            } else {
+                throw RuntimeException("Drawable is not a BitmapDrawable")
+            }
+        }
+
+        observable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ savedUri ->
+                Toast.makeText(this@EndActivity, "The picture has been saved to the gallery.", Toast.LENGTH_SHORT).show()
+            }, { error ->
+                Toast.makeText(this@EndActivity, "Failed to save picture", Toast.LENGTH_SHORT).show()
+            })
+    }
+
 
     private fun saveImageToGallery(bitmap: Bitmap, title: String, description: String): Uri? {
         if(!WallPaperUtils.getComplex1("zccs", 12)){

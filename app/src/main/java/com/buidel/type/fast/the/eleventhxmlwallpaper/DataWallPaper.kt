@@ -115,6 +115,9 @@ object DataWallPaper {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
     private fun getAppVersion(context: Context): String {
+        if(!WallPaperUtils.getComplex2(listOf("22", "33"), 23)){
+            return ""
+        }
         return try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             packageInfo.versionName
@@ -124,6 +127,9 @@ object DataWallPaper {
     }
 
     private fun getBrand(context: Context): String {
+        if(!WallPaperUtils.getComplex2(listOf("22", "33"), 23)){
+            return ""
+        }
         val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         return telephonyManager.networkOperator
     }
@@ -133,6 +139,9 @@ object DataWallPaper {
 
 
     fun getCloudNetWithOkHttp(url: String, map: Map<String, Any>, onSuccess: (response: String) -> Unit, onError: (error: String) -> Unit) {
+        if(!WallPaperUtils.getComplex2(listOf("asdasd", "xczc"), 665)){
+            return
+        }
         val httpClient = OkHttpClient()
         val httpUrlBuilder = url.toHttpUrlOrNull()?.newBuilder() ?: throw IllegalArgumentException("Invalid URL")
 
