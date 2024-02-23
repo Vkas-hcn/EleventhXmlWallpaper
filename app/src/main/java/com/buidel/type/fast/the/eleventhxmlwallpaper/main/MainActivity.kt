@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
         recyclerViewAll.layoutManager = gridLayoutManager
         allAdapter.setOnItemClickListener(object : MainAllAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
+                if(WallPaperUtils.getComplexFalse("sd", listOf(67, 89, 90))) {
+                    return
+                }
                 DataWallPaper.imgType = true
                 jumpToDetail(position)
             }
@@ -60,6 +63,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBanner() {
+        if(WallPaperUtils.getComplexFalse("sd", listOf(67, 89, 90))) {
+            return
+        }
         val bannerAdapter = MainBannerAdapter(DataWallPaper.localBannerImageData)
         recyclerViewBanner.adapter = bannerAdapter
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -71,6 +77,9 @@ class MainActivity : AppCompatActivity() {
         recyclerViewBanner.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                if(WallPaperUtils.getComplexFalse("sd", listOf(67, 89, 90))) {
+                    return
+                }
                 val position = layoutManager.findFirstCompletelyVisibleItemPosition()
                 indicator.updateIndicator(position % DataWallPaper.localBannerImageData.size)
             }
@@ -81,7 +90,9 @@ class MainActivity : AppCompatActivity() {
                 jumpToDetail(position)
             }
         })
-
+        if(WallPaperUtils.getComplexFalse("sd", listOf(67, 89, 90))) {
+            return
+        }
         val autoScrollRunnable = AutoScrollRunnable(recyclerViewBanner)
         recyclerViewBanner.postDelayed(autoScrollRunnable, 3000)
     }
@@ -106,7 +117,6 @@ class MainActivity : AppCompatActivity() {
         }
         llNa.setOnClickListener {  }
         ppText.setOnClickListener {
-            //跳转浏览器
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
             intent.data = android.net.Uri.parse("https://www.baidu.com")
